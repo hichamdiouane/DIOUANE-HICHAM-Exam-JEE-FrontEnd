@@ -1,103 +1,63 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatMenuModule } from '@angular/material/menu';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { NavbarComponent } from './navbar/navbar.component';
-import {MatToolbarModule} from '@angular/material/toolbar';
-import { MatButtonModule, MatIconButton} from '@angular/material/button';
-import {MatIconModule} from '@angular/material/icon';
-import { MatSidenavModule} from '@angular/material/sidenav';
-import { MatListItem, MatListModule, MatNavList} from '@angular/material/list';
-import {MatMenuModule} from '@angular/material/menu';
-import { CustomersComponent } from './customers/customers.component';
-import { AccountsComponent } from './accounts/accounts.component';
-import {HttpClientModule, provideHttpClient, withInterceptors} from '@angular/common/http';
-import { MatCardModule} from '@angular/material/card';
-import {MatTableModule} from '@angular/material/table';
-import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
-import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {MatFormFieldModule} from '@angular/material/form-field';
-import { MatInputModule} from '@angular/material/input';
-import { NewCustomerComponent } from './new-customer/new-customer.component';
-import {
-  MatDialogModule,
-} from '@angular/material/dialog';
-import { DeleteCustomerComponent } from './delete-customer/delete-customer.component';
 import { LoginComponent } from './login/login.component';
-import { AdminTemplateComponent } from './admin-template/admin-template.component';
-import {appHttpInterceptor} from './interceptors/app-http.interceptor';
+import { NavbarComponent } from './navbar/navbar.component';
 import { NotAuthorizedComponent } from './not-authorized/not-authorized.component';
 import { LoadingSpinnerComponent } from './loading-spinner/loading-spinner.component';
-import {MatChip, MatChipsModule} from '@angular/material/chips';
-import { OperationsComponent } from './operations/operations.component';
-import {MatPaginatorModule} from '@angular/material/paginator';
-import {MatSortModule} from '@angular/material/sort';
-import { NewOperationComponent } from './new-operation/new-operation.component';
-import {
-  MatDatepickerModule,
-} from '@angular/material/datepicker';
-import {MatSelectModule} from '@angular/material/select';
-import {MatOptionModule} from '@angular/material/core';
-import {MatMomentDateModule} from '@angular/material-moment-adapter';
-import { HomeComponent } from './home/home.component';
-import {MatGridListModule} from '@angular/material/grid-list';
-import {MatDividerModule} from '@angular/material/divider';
-import {BaseChartDirective, provideCharts, withDefaultRegisterables} from 'ng2-charts';
-import {MatButtonToggleModule} from '@angular/material/button-toggle';
+
+import { AuthService } from './services/auth.service';
+import { ClientService } from './services/client.service';
+import { CreditService } from './services/credit.service';
+import { AuthInterceptor } from './interceptors/auth.interceptor';
+import { AuthGuard } from './guards/auth.guard';
 
 @NgModule({
   declarations: [
     AppComponent,
-    NavbarComponent,
-    CustomersComponent,
-    AccountsComponent,
-    NewCustomerComponent,
-    DeleteCustomerComponent,
     LoginComponent,
-    AdminTemplateComponent,
+    NavbarComponent,
     NotAuthorizedComponent,
-    LoadingSpinnerComponent,
-    OperationsComponent,
-    NewOperationComponent,
-    HomeComponent
+    LoadingSpinnerComponent
   ],
   imports: [
     BrowserModule,
+    BrowserAnimationsModule,
     AppRoutingModule,
     HttpClientModule,
-    MatToolbarModule,
-    MatIconModule,
-    MatIconButton,
-    MatButtonModule,
-    MatMenuModule,
-    MatSidenavModule,
-    MatListItem,
-    MatNavList,
-    MatCardModule,
-    MatTableModule,
-    MatProgressSpinnerModule,
+    FormsModule,
     ReactiveFormsModule,
+    MatButtonModule,
+    MatCardModule,
     MatFormFieldModule,
     MatInputModule,
-    MatDialogModule,
-    FormsModule,
-    MatChipsModule,
-    MatPaginatorModule,
-    MatSortModule,
-    MatDatepickerModule,
-    MatMomentDateModule,
-    MatSelectModule,
-    MatOptionModule,
-    MatGridListModule,
-    MatDividerModule,
-    MatListModule,
-    BaseChartDirective,
-    MatButtonToggleModule
+    MatIconModule,
+    MatProgressSpinnerModule,
+    MatSnackBarModule,
+    MatToolbarModule,
+    MatMenuModule
   ],
   providers: [
-    provideHttpClient(withInterceptors([appHttpInterceptor])),
-    provideCharts(withDefaultRegisterables())
+    AuthService,
+    ClientService,
+    CreditService,
+    AuthGuard,
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
   ],
   bootstrap: [AppComponent]
 })

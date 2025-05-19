@@ -1,60 +1,62 @@
 import { Injectable } from '@angular/core';
-import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
-import {jwtDecode} from 'jwt-decode';
-import {Router} from '@angular/router';
-import {environment} from '../../environments/environment';
+import { HttpClient } from '@angular/common/http';
+import { Observable, BehaviorSubject } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { environment } from '../../environments/environment';
+import { User } from '../model/credit.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
+  private currentUserSubject: BehaviorSubject<User | null>;
+  public currentUser: Observable<User | null>;
 
-  isAuthenticated:boolean=false;
-  roles:any;
-  username:any;
-  accessToken!:any;
-
-  constructor(private http:HttpClient,private router:Router) { }
-
-  public login(username: string, password: string){
-    let options = {
-      headers:new HttpHeaders({}).set("Content-type", "application/x-www-form-urlencoded")
-    };
-    let params=new HttpParams().set('username', username).set('password', password);
-    return this.http.post(environment.backendHost+"/auth/login", params, options);
+  constructor(private http: HttpClient) {
+    this.currentUserSubject = new BehaviorSubject<User | null>(
+      JSON.parse(localStorage.getItem('currentUser') || 'null')
+    );
+    this.currentUser = this.currentUserSubject.asObservable();
   }
 
-  public logout(){
-    this.isAuthenticated=false;
-    this.roles=undefined;
-    this.username=undefined;
-    this.accessToken=undefined;
-    window.localStorage.removeItem('jwt-token');
-    this.router.navigateByUrl('/login').then();
+  public get currentUserValue(): User | null {
+    return this.currentUserSubject.value;
   }
 
-  loadProfile(data: any) {
-    this.accessToken = data['access-token'];
-
-    console.log('Access token received:', this.accessToken);
-
-    if (typeof this.accessToken === 'string' && this.accessToken.trim() !== '') {
-      this.isAuthenticated = true;
-      const decodedJwt = jwtDecode(this.accessToken) as any;
-      this.username = decodedJwt.sub;
-      this.roles = decodedJwt.scope;
-      window.localStorage.setItem('jwt-token', this.accessToken);
-    } else {
-      console.error('Invalid access token received:', this.accessToken);
-      this.isAuthenticated = false;
-    }
+  login(username: string, password: string): Observable<User> {
+    return this.http.post<User>(`${environment.apiUrl}/auth/login`, { username, password })
+      .pipe(map(user => {
+        localStorage.setItem('currentUser', JSON.stringify(user));
+        this.currentUserSubject.next(user);
+        return user;
+      }));
   }
-  loadJwtTokenFromLocalStorage(){
-    let token=window.localStorage.getItem('jwt-token');
-    if(token){
-      this.loadProfile({ 'access-token': token });
-      console.log("Token loaded from local storage:", token);
-      //this.router.navigateByUrl('/admin/customers').then();
-    }
+
+  logout(): void {
+    localStorage.removeItem('currentUser');
+    this.currentUserSubject.next(null);
+  }
+
+  register(user: User): Observable<User> {
+    return this.http.post<User>(`${environment.apiUrl}/auth/register`, user);
+  }
+
+  changePassword(oldPassword: string, newPassword: string): Observable<any> {
+    return this.http.post(`${environment.apiUrl}/auth/change-password`, {
+      oldPassword,
+      newPassword
+    });
+  }
+
+  resetPassword(email: string): Observable<any> {
+    return this.http.post(`${environment.apiUrl}/auth/reset-password`, { email });
+  }
+
+  isAuthenticated(): boolean {
+    return !!this.currentUserValue;
+  }
+
+  hasRole(role: string): boolean {
+    return this.currentUserValue?.roles?.includes(role) || false;
   }
 }

@@ -13,15 +13,33 @@ export class StatsService {
     const params = new HttpParams()
       .set('startDate', startDate)
       .set('endDate', endDate);
-    return this.http.get(`${environment.backendHost}/stats/operations`, { params });
+    return this.http.get(`${environment.apiUrl}/stats/operations`, { params });
   }
   getOperationsChartData(startDate: string, endDate: string): Observable<any> {
     const params = new HttpParams()
       .set('startDate', startDate)
       .set('endDate', endDate);
-    return this.http.get(`${environment.backendHost}/stats/operations-chart`, { params });
+    return this.http.get(`${environment.apiUrl}/stats/operations-chart`, { params });
   }
-  getAccountsByType(): Observable<{ [type: string]: number }> {
-    return this.http.get<{ [type: string]: number }>(`${environment.backendHost}/stats/accounts-by-type`);
+  getAccountsByType(): Observable<{ [key: string]: number }> {
+    return this.http.get<{ [key: string]: number }>(`${environment.apiUrl}/stats/accounts-by-type`);
+  }
+  getTotalCredits(): Observable<number> {
+    return this.http.get<number>(`${environment.apiUrl}/stats/total-credits`);
+  }
+  getCreditsByStatus(): Observable<{ [key: string]: number }> {
+    return this.http.get<{ [key: string]: number }>(`${environment.apiUrl}/stats/credits-by-status`);
+  }
+  getCreditsByType(): Observable<{ [key: string]: number }> {
+    return this.http.get<{ [key: string]: number }>(`${environment.apiUrl}/stats/credits-by-type`);
+  }
+  getTotalRemboursements(): Observable<number> {
+    return this.http.get<number>(`${environment.apiUrl}/stats/total-remboursements`);
+  }
+  getRemboursementsByType(): Observable<{ [key: string]: number }> {
+    return this.http.get<{ [key: string]: number }>(`${environment.apiUrl}/stats/remboursements-by-type`);
+  }
+  getCreditsByClient(): Observable<{ [key: string]: number }> {
+    return this.http.get<{ [key: string]: number }>(`${environment.apiUrl}/stats/credits-by-client`);
   }
 }

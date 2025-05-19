@@ -1,19 +1,20 @@
 import { Injectable } from '@angular/core';
-import {HttpClient} from '@angular/common/http';
-import {Observable} from 'rxjs';
-import {Account} from '../model/account.model';
-import {environment} from '../../environments/environment';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
+import { Account } from '../model/account.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AccountService {
+  constructor(private http: HttpClient) {}
 
-  constructor(private http:HttpClient) { }
-  public getAccounts():Observable<Array<Account>>{
-    return this.http.get<Array<Account>>(environment.backendHost+'/accounts');
+  getAccounts(): Observable<Account[]> {
+    return this.http.get<Account[]>(`${environment.apiUrl}/accounts`);
   }
-  public getAccount(id:string):Observable<Account>{
-    return this.http.get<Account>(environment.backendHost+'/accounts/'+id);
+
+  getAccountById(id: string): Observable<Account> {
+    return this.http.get<Account>(`${environment.apiUrl}/accounts/${id}`);
   }
 }

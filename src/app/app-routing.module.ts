@@ -11,6 +11,8 @@ import {NotAuthorizedComponent} from './not-authorized/not-authorized.component'
 import {authorizationGuard} from './guards/authorization.guard';
 import {OperationsComponent} from './operations/operations.component';
 import {HomeComponent} from './home/home.component';
+import { AuthGuard } from './guards/auth.guard';
+import { UserRole } from './model/auth.model';
 
 const routes: Routes = [
   { path: "", redirectTo: "login", pathMatch: "full" },
@@ -18,15 +20,21 @@ const routes: Routes = [
   { path: "not-authorized", component: NotAuthorizedComponent },
   {
     path: "admin",
-    component: AdminTemplateComponent,
-    canActivate: [authenticationGuard],
-    children: [
-      { path: "", redirectTo: "home", pathMatch: "full" },
-      { path: "home", component: HomeComponent },
-      { path: "customers", component: CustomersComponent },
-      { path: "accounts", component: AccountsComponent },
-      { path: "new-customer", component: NewCustomerComponent, canActivate: [authorizationGuard], data: { role: "ADMIN" } },
-    ]
+    loadChildren: () => import('./admin/admin.module').then(m => m.AdminModule),
+    canActivate: [AuthGuard],
+    data: { roles: [UserRole.ROLE_ADMIN] }
+  },
+  {
+    path: "client",
+    loadChildren: () => import('./client/client.module').then(m => m.ClientModule),
+    canActivate: [AuthGuard],
+    data: { roles: [UserRole.ROLE_CLIENT] }
+  },
+  {
+    path: "employee",
+    loadChildren: () => import('./employee/employee.module').then(m => m.EmployeeModule),
+    canActivate: [AuthGuard],
+    data: { roles: [UserRole.ROLE_EMPLOYE] }
   }
 ];
 

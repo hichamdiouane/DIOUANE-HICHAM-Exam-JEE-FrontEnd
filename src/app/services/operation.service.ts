@@ -11,9 +11,9 @@ export class OperationService {
 
   constructor(private httpClient:HttpClient) { }
   public getOperations(accountId:string,page:number,size:number):Observable<Operation>{
-    return this.httpClient.get<Operation>(environment.backendHost+`/accounts/${accountId}/pageOperations?size=${size}&page=${page}`);
+    return this.httpClient.get<Operation>(`${environment.apiUrl}/accounts/${accountId}/operations?size=${size}&page=${page}`);
   }
   public saveOperation(operation:Operation):Observable<Operation>{
-    return this.httpClient.post<Operation>(environment.backendHost+`/operations`,operation);
+    return this.httpClient.post<Operation>(`${environment.apiUrl}/operations`,operation);
   }
 }
