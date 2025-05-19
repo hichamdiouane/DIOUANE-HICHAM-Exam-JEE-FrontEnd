@@ -1,0 +1,135 @@
+<div class="dashboard-container">
+  <div *ngIf="isLoading$ | async" class="spinner-container">
+    <mat-spinner [diameter]="diameter"></mat-spinner>
+  </div>
+
+  <div class="dashboard-header">
+    <h1 class="dashboard-title">Dashboard Overview</h1>
+    <p class="dashboard-subtitle">Welcome to your banking dashboard</p>
+  </div>
+
+  <div class="stats-grid">
+    <mat-card class="stat-card">
+      <div class="stat-card-content">
+        <div class="stat-icon-wrapper blue">
+          <mat-icon>account_box</mat-icon>
+        </div>
+        <div class="stat-info">
+          <h3 class="stat-value">{{numberOfAccounts}}</h3>
+          <p class="stat-label">Total Accounts</p>
+        </div>
+      </div>
+    </mat-card>
+
+    <mat-card class="stat-card">
+      <div class="stat-card-content">
+        <div class="stat-icon-wrapper green">
+          <mat-icon>supervisor_account</mat-icon>
+        </div>
+        <div class="stat-info">
+          <h3 class="stat-value">{{numberOfCustomers}}</h3>
+          <p class="stat-label">Total Clients</p>
+        </div>
+      </div>
+    </mat-card>
+
+    <mat-card class="stat-card">
+      <div class="stat-card-content">
+        <div class="stat-icon-wrapper orange">
+          <mat-icon>swap_horiz</mat-icon>
+        </div>
+        <div class="stat-info">
+          <h3 class="stat-value">{{totalOperations}}</h3>
+          <p class="stat-label">Total Transactions</p>
+        </div>
+      </div>
+    </mat-card>
+
+    <mat-card class="stat-card">
+      <div class="stat-card-content">
+        <div class="stat-icon-wrapper purple">
+          <mat-icon>monetization_on</mat-icon>
+        </div>
+        <div class="stat-info">
+          <h3 class="stat-value">{{totalAmount | currency}}</h3>
+          <p class="stat-label">Total Amount</p>
+        </div>
+      </div>
+    </mat-card>
+  </div>
+
+  <div class="charts-section">
+    <mat-card class="chart-card">
+      <mat-card-header>
+        <mat-card-title>Account Distribution</mat-card-title>
+        <mat-card-subtitle>Overview of account types</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="chart-container">
+          <canvas baseChart
+                  [data]="pieChartData"
+                  [options]="pieChartOptions"
+                  type="doughnut">
+          </canvas>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="chart-card">
+      <mat-card-header>
+        <mat-card-title>Transaction History</mat-card-title>
+        <mat-card-subtitle>
+          <div class="time-filter">
+            <span>Operations in the last</span>
+            <mat-button-toggle-group class="time-toggle-group" value="7">
+              <mat-button-toggle value="7">7 days</mat-button-toggle>
+              <mat-button-toggle value="30">30 days</mat-button-toggle>
+              <mat-button-toggle value="90">90 days</mat-button-toggle>
+            </mat-button-toggle-group>
+          </div>
+        </mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="chart-container">
+          <canvas baseChart
+                  [data]="lineChartData"
+                  [options]="lineChartOptions"
+                  type="line">
+          </canvas>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="chart-card">
+      <mat-card-header>
+        <mat-card-title>Monthly Transactions</mat-card-title>
+        <mat-card-subtitle>Transaction volume by month</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="chart-container">
+          <canvas baseChart
+                  [data]="barChartData"
+                  [options]="barChartOptions"
+                  type="bar">
+          </canvas>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="chart-card">
+      <mat-card-header>
+        <mat-card-title>Transaction Distribution</mat-card-title>
+        <mat-card-subtitle>By transaction type</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="chart-container">
+          <canvas baseChart
+                  [data]="polarAreaChartData"
+                  [options]="polarAreaChartOptions"
+                  type="polarArea">
+          </canvas>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
